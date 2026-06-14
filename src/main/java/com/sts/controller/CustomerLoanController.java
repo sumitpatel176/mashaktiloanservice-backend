@@ -15,7 +15,7 @@ import com.sts.service.CustomerLoanService;
 
 @RestController
 @RequestMapping("/api/public/loans")
-@CrossOrigin(origins = {"http://localhost:5173", "https://mashaktiloanservice-frontend-gray.vercel.app"})
+@CrossOrigin(origins = "https://mashaktiloanservice-frontend-gray.vercel.app")
 public class CustomerLoanController {
 	
 	@Autowired

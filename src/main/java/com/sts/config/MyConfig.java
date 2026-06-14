@@ -30,7 +30,7 @@ public class MyConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // Ab plain text nahi, industry standard hashing use hogi
+        // Wapas secure BCrypt encoder laga diya
         return new BCryptPasswordEncoder();
     }
     
@@ -53,22 +53,23 @@ public class MyConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
-            
-            // 🔥 Real CORS Configuration jo React (5173) ko har endpoint par allow karegi
-            .cors(cors -> cors.configurationSource(corsConfigurationSource())) 
-            
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/public/loans/**").permitAll() 
-                .requestMatchers("/api/auth/login").permitAll() // Login endpoint public rahega
-                .requestMatchers("/api/auth/register").hasRole("ADMIN")
+                // 1. Sabse pehle PUBLIC endpoints (Bina login wale) upar aane chahiye
+                 
+                .requestMatchers("/api/public/**").permitAll()
+                
+                // 2. Phir ROLE-BASED endpoints aane chahiye
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/auth/**").hasRole("ADMIN")
+                
+                // 3. Aakhri me baaki saare bache hue requests authenticated hone chahiye
                 .anyRequest().authenticated()
             )
             .httpBasic(Customizer.withDefaults());
-
+            
         return http.build();
     }
-    
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();

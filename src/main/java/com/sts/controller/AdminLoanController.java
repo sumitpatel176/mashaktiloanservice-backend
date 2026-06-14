@@ -10,7 +10,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin/loans")
-@CrossOrigin(origins = "http://localhost:5173") // 👈 Yeh line React Admin Portal ko connect karegi
+@CrossOrigin(origins = {"http://localhost:5173", "https://mashaktiloanservice-frontend-gray.vercel.app"}) // 👈 Yeh line React Admin Portal ko connect karegi
 public class AdminLoanController {
 
     @Autowired

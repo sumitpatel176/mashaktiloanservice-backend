@@ -16,7 +16,7 @@ public class AdminLoanController {
     @Autowired
     private AdminLoanService adminService;
 
-    // 1. Saara data nikalne ke liye
+   
     @GetMapping("/all")
     public ResponseEntity<List<LoanApplication>> getAllData() {
         List<LoanApplication> list = adminService.fetchAllApplication();

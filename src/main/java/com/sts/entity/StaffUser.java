@@ -14,9 +14,8 @@ public class StaffUser {
     private String username;
 
     @Column(nullable = false)
-    private String password; // BCrypt hash format me store hoga
-
-    private String role; // e.g., "ROLE_ADMIN"
+    private String password; 
+    private String role; 
 
     // --- Getters and Setters ---
     public Long getId() { return id; }

@@ -57,7 +57,7 @@ public class MyConfig {
             .authorizeHttpRequests(auth -> auth
                 // 1. Sabse pehle PUBLIC endpoints (Bina login wale) upar aane chahiye
                  
-                .requestMatchers("/api/public/**").permitAll()
+                .requestMatchers("/api/public/loans/**","/error").permitAll()
                 
                 // 2. Phir ROLE-BASED endpoints aane chahiye
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")

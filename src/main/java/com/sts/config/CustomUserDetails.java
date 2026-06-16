@@ -20,9 +20,7 @@ public class CustomUserDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
     	
     	String userRole = staffUser.getRole().toUpperCase(); 
-    	
-    	System.out.println("====== DB SE AAYA HUA ROLE ======: " + staffUser.getRole());
-        System.out.println("====== FINAL AUTHORITY BAN RAHI HAI ======: " + "ROLE_" + userRole);
+    
         
         // Spring Security hamesha check karte waqt "ROLE_" prefix dhoondta hai
         return List.of(new SimpleGrantedAuthority("ROLE_" + userRole));

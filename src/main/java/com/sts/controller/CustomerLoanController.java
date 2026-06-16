@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sts.entity.LoanApplication;
 import com.sts.service.CustomerLoanService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/public/loans")
 
@@ -22,7 +24,7 @@ public class CustomerLoanController {
 	private CustomerLoanService customerService;
 	
 	@PostMapping("/submit")
-	public ResponseEntity<?> submitForm(@RequestBody LoanApplication application){
+	public ResponseEntity<?> submitForm(@Valid @RequestBody LoanApplication application){
 		customerService.applyForLoan(application);
 		return ResponseEntity.ok(Map.of(
 	            "status", "success", 

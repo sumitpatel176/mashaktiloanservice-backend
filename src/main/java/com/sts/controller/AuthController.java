@@ -3,11 +3,12 @@ package com.sts.controller;
 import com.sts.dto.LoginRequest;
 import com.sts.entity.StaffUser;
 import com.sts.repository.StaffUserRepository;
+import com.sts.service.PasswordResetService;
 
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,7 +33,7 @@ public class AuthController {
     private PasswordEncoder passwordEncoder;
     
 
-    // 1. REGISTER ENDPOINT (Naya Account Banane Ke Liye)
+    // 1. REGISTER ENDPOINT 
     @PostMapping("/register")
     public ResponseEntity<String> registerStaff(@RequestBody StaffUser staffUser) {
         // Check karo ki username pehle se toh nahi hai database mein
@@ -40,24 +41,22 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Username already exists!");
         }
 
-        // Plain password ko BCrypt se encrypt (hash) karo
         String rawPassword = staffUser.getPassword();
         String encodedPassword = passwordEncoder.encode(rawPassword);
         staffUser.setPassword(encodedPassword);
 
-        // Bhaiya akele hain, isliye default role 'admin' hi set rahega
         if (staffUser.getRole() == null || staffUser.getRole().isEmpty()) {
             staffUser.setRole("admin"); 
         } else {
             staffUser.setRole(staffUser.getRole().toLowerCase());
         }
 
-        // Database mein save karo
+       
         staffUserRepository.save(staffUser);
         return ResponseEntity.ok("Admin registered successfully with secure password!");
     }
 
-    // 2. LOGIN ENDPOINT (Frontend Form Se Login Check Karne Ke Liye)
+    // 2. LOGIN ENDPOINT 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
@@ -74,5 +73,28 @@ public class AuthController {
             // Agar galat credentials hue toh 401 Unauthorized jayega
             return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
         }
+    }
+    
+    @Autowired
+    private PasswordResetService passwordResetService;
+
+    // 1. Forgot Password Endpoint 
+    @PostMapping("/public/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestParam String username) {
+        String result = passwordResetService.sendResetToken(username);
+        if (result.equals("Success")) {
+            return ResponseEntity.ok("Password reset link has been sent to your email.");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
+    }
+
+    // 2. Reset Password Endpoint 
+    @PostMapping("/public/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestParam String token, @RequestParam String newPassword) {
+        String result = passwordResetService.resetPassword(token, newPassword);
+        if (result.equals("Password Reset Successful!")) {
+            return ResponseEntity.ok(result);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
     }
 }
